@@ -30,7 +30,7 @@ BLEACHBIT_CLEANERS="bash.history system.cache system.clipboard system.custom sys
 OVERWRITE="true"
 
 # The default local hostname
-REAL_HOSTNAME="backbox"
+REAL_HOSTNAME="ozuna"
 
 # Include default options, if any
 if [ -f /etc/default/backbox-anonymous ] ; then
@@ -133,11 +133,12 @@ change_hostname() {
 change_mac() {
 	
 	VAR=0
+	IFACE="wlan0"
 	
 	while [ $VAR -eq 0 ]; do
 		echo -n "Select network interfaces ["
 		echo -n $(ifconfig -a | grep Ethernet | awk '{print $1}')
-		read -p "] > " IFACE
+		#read -p "] > " IFACE
 		
 		ifconfig -a | grep Ethernet | awk '{print $1}' | grep -q -x "$IFACE"
 		
@@ -183,6 +184,8 @@ check_configs() {
 		echo ' TransPort 9040'
 		echo ' DNSPort 53'
 		echo ' AutomapHostsOnResolve 1\n'
+		echo ' ExitNodes {TW}'
+		echo ' StrictNodes 1'
 		exit 1
 	fi
 }
@@ -298,7 +301,7 @@ do_stop() {
 	echo "\n[i] Stopping anonymous mode\n"
 
 	echo -n " * Service "
-	service network-manager stop 2>/dev/null || echo " network-manager already stopped"
+	#service network-manager stop 2>/dev/null || echo " network-manager already stopped"
 
 	iptables_flush
 
@@ -382,8 +385,22 @@ case "$1" in
 	;;
 	*)
 		echo "Usage: $0 {start|stop|status}" >&2
+		##my config
+		check_configs
+		check_root
+		warning
+		service network-manager stop 2>/dev/null || echo " network-manager already stopped"
+		kill_process
+		#cambia mac
+		change_mac
+		redirect_to_tor
+		service network-manager start 2>/dev/null || echo "network-manager already started"
+		service tor restart
 		exit 3
 	;;
 esac
+
+
+	
 
 exit 0

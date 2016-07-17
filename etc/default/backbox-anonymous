@@ -7,6 +7,7 @@ NON_TOR="192.168.0.0/16 172.16.0.0/12"
 
 # The UID as which Tor runs
 TOR_UID="debian-tor"
+#TOR_UID="ozuna"
 
 # Tor TransPort
 TRANS_PORT="9040"
@@ -21,4 +22,4 @@ BLEACHBIT_CLEANERS="bash.history system.cache system.clipboard system.custom sys
 OVERWRITE="true"
 
 # The default local hostname
-REAL_HOSTNAME="backbox"
+REAL_HOSTNAME="ozuna"
